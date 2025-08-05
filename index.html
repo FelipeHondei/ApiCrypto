@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoAnalyzer - Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="floating-shapes"></div>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="crypto-rain" id="cryptoRain"></div>
+        <div class="loading-container">
+            <div class="loading-title">CRYPTO ANALYZER</div>
+            <div class="loading-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+            </div>
+            <div class="loading-text">Conectando ao mercado...</div>
+            <div class="loading-progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="loading-status" id="loadingStatus">Inicializando sistema...</div>
+        </div>
+    </div>
+
+    <div class="api-status">
+            <div class="status-indicator">
+                <div id="statusDot" class="status-dot"></div>
+                <span id="statusText">Desconectado da API</span>
+            </div>
+            <button class="load-button" id="analyzeButton" onclick="analyzeMarket()">
+                <span id="buttonText">Analisar Mercado</span>
+            </button>
+            <button class="load-button" onclick="autoRefresh()" id="autoRefreshBtn">
+                ⏰ Auto Refresh (OFF)
+            </button>
+        </div>
+
+    <div class="container" id="mainContainer">
+        <div class="header">
+            <h1>CryptoAnalyzer</h1>
+            <p>Dashboard de análise criptomoedas</p>
+        </div>
+
+        
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <div id="statsSection" style="display: none;">
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <h3>Em Alta (24h)</h3>
+                    <div class="value" id="highPerformersCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Oportunidades</h3>
+                    <div class="value" id="opportunitiesCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Top Performers</h3>
+                    <div class="value" id="topPerformersCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Analisadas</h3>
+                    <div class="value" id="totalAnalyzed">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="highPerformersSection" class="section" style="display: none;">
+            <h2 class="section-title">🚀 Moedas em Alta (24h)</h2>
+            <div id="highPerformersGrid" class="cards-grid"></div>
+        </div>
+
+        <div id="opportunitiesSection" class="section" style="display: none;">
+            <h2 class="section-title">💡 Oportunidades de Compra</h2>
+            <p style="color: #a0a0a0; margin-bottom: 20px; padding-left: 15px;">
+                Moedas com crescimento positivo nos últimos 7 dias, mas queda nas últimas 24h
+            </p>
+            <div id="opportunitiesGrid" class="cards-grid"></div>
+        </div>
+
+        <div id="topPerformersSection" class="section" style="display: none;">
+            <h2 class="section-title">🏆 Top Performers (24h)</h2>
+            <div id="topPerformersGrid" class="cards-grid"></div>
+        </div>
+
+        <div id="lastUpdate" class="last-update" style="display: none;"></div>
+
+        <a href="#" class="cta-button" onclick="activateGlitch()">Enter the Matrix</a>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
