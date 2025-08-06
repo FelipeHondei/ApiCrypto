@@ -100,7 +100,6 @@ class LoadingManager {
     }
 
     showContent() {
-        // Mostra as seções com animação sequencial
         setTimeout(() => {
             const statsGrid = document.getElementById('statsGrid');
             if (statsGrid) statsGrid.classList.add('loaded');
@@ -119,6 +118,115 @@ class LoadingManager {
     delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
+}
+
+// Elementos do cursor
+const cursor = document.querySelector('.cursor');
+const cursorFollower = document.querySelector('.cursor-follower');
+let mouseX = 0, mouseY = 0;
+let followerX = 0, followerY = 0;
+let trailElements = [];
+
+// Atualizar posição do mouse
+document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+
+// Animar cursor principal e seguidor
+function updateCursor() {
+    // Cursor principal (resposta imediata)
+    cursor.style.left = mouseX + 'px';
+    cursor.style.top = mouseY + 'px';
+
+    // Cursor seguidor (com atraso suave)
+    followerX += (mouseX - followerX) * 0.1;
+    followerY += (mouseY - followerY) * 0.1;
+
+    cursorFollower.style.left = followerX + 'px';
+    cursorFollower.style.top = followerY + 'px';
+
+    requestAnimationFrame(updateCursor);
+}
+updateCursor();
+
+// Efeito de trilha do cursor
+let trailTimer = 0;
+document.addEventListener('mousemove', (e) => {
+    trailTimer++;
+    if (trailTimer % 3 === 0) { // Criar trilha a cada 3 movimentos
+        createTrail(e.clientX, e.clientY);
+    }
+});
+
+function createTrail(x, y) {
+    const trail = document.createElement('div');
+    trail.className = 'cursor-trail';
+    trail.style.left = x + 'px';
+    trail.style.top = y + 'px';
+    document.body.appendChild(trail);
+
+    // Animar e remover a trilha
+    setTimeout(() => {
+        trail.style.opacity = '0';
+        trail.style.transform = 'scale(0)';
+        trail.style.transition = 'all 0.5s ease';
+
+        setTimeout(() => {
+            if (trail.parentNode) {
+                trail.parentNode.removeChild(trail);
+            }
+        }, 500);
+    }, 100);
+}
+
+// Criar partículas no clique
+document.addEventListener('click', (e) => {
+    for (let i = 0; i < 6; i++) {
+        createParticle(e.clientX, e.clientY);
+    }
+});
+
+function createParticle(x, y) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+
+    const size = Math.random() * 6 + 4;
+    particle.style.width = size + 'px';
+    particle.style.height = size + 'px';
+    particle.style.left = x + 'px';
+    particle.style.top = y + 'px';
+
+    document.body.appendChild(particle);
+
+    // Animar partícula
+    const angle = Math.random() * Math.PI * 2;
+    const distance = Math.random() * 100 + 50;
+    const duration = Math.random() * 1000 + 1000;
+
+    particle.animate([
+        {
+            transform: 'translate(-50%, -50%) scale(1)',
+            opacity: 1
+        },
+        {
+            transform: `translate(${Math.cos(angle) * distance - 50}px, ${Math.sin(angle) * distance - 50}px) scale(0)`,
+            opacity: 0
+        }
+    ], {
+        duration: duration,
+        easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+    }).onfinish = () => {
+        if (particle.parentNode) {
+            particle.parentNode.removeChild(particle);
+        }
+    };
+}
+// Detectar dispositivos móveis e ocultar cursor customizado
+if (window.innerWidth <= 768) {
+    cursor.style.display = 'none';
+    cursorFollower.style.display = 'none';
+    document.body.style.cursor = 'auto';
 }
 
 // Mock data para demonstração quando a API falhar
@@ -162,7 +270,7 @@ async function fetchCryptoData() {
 
 function updateStatus(status) {
     const statusDot = document.getElementById('statusDot');
-    
+
 
     statusDot.className = 'status-dot';
     if (status === 'connected') {
@@ -354,6 +462,8 @@ async function analyzeMarket() {
             throw new Error('Nenhum dado de criptomoeda foi retornado');
         }
 
+        await new Promise(resolve => setTimeout(resolve, 3000));
+
         const analysisResults = analyzeMarketData(cryptoData);
         displayResults(analysisResults);
 
@@ -365,28 +475,6 @@ async function analyzeMarket() {
         // Re-enable button
         button.disabled = false;
         buttonText.textContent = 'Atualizar';
-    }
-}
-
-function autoRefresh() {
-    const button = document.getElementById('autoRefreshBtn');
-
-    if (isAutoRefreshing) {
-        // Stop auto refresh
-        clearInterval(autoRefreshInterval);
-        isAutoRefreshing = false;
-        button.textContent = '⏰ Auto Refresh (OFF)';
-        button.style.background = 'linear-gradient(45deg, #00d4ff, #1e90ff)';
-    } else {
-        // Start auto refresh
-        isAutoRefreshing = true;
-        button.textContent = '⏰ Auto Refresh (ON)';
-        button.style.background = 'linear-gradient(45deg, #00ff88, #00cc6a)';
-
-        // Refresh every 5 minutes
-        autoRefreshInterval = setInterval(() => {
-            analyzeMarket();
-        }, 300000);
     }
 }
 

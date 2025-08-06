@@ -11,6 +11,52 @@ body {
     background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
     color: #fff;
     min-height: 100vh;
+    overflow-x: hidden;
+    cursor: none;
+}
+
+.cursor {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+    transition: all 0.1s ease;
+    transform: translate(-50%, -50%);
+}
+
+.cursor-follower {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background-color: #fff;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.15s ease;
+    transform: translate(-50%, -50%);
+}
+
+/* Efeito de trilha do cursor */
+.cursor-trail {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9997;
+}
+
+.particle {
+    position: fixed;
+    pointer-events: none;
+    border-radius: 50%;
+    background: #fff;
+    z-index: 9996;
 }
 
 .floating-shapes {
@@ -299,6 +345,7 @@ body {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    cursor: none;
 }
 
 .cta-button::before {
@@ -311,16 +358,19 @@ body {
     background: #00c3ff;
     transition: left 0.3s;
     z-index: -1;
+    cursor: none;
 }
 
 .cta-button:hover::before {
     left: 0;
+    cursor: none;
 }
 
 .cta-button:hover {
     color: #000;
     transform: scale(1.05);
     box-shadow: 0 0 30px rgba(0, 225, 255, 0.5);
+    cursor: none;
 }
 
 .load-button {
@@ -331,22 +381,24 @@ body {
     border-radius: 25px;
     font-size: 1rem;
     font-weight: 600;
-    cursor: pointer;
     transition: all 0.3s ease;
     margin: 10px;
     position: relative;
     overflow: hidden;
+    cursor: none;
 }
 
 .load-button:hover {
     transform: scale(1.05);
     box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+    cursor: none;
 }
 
 .load-button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
+    cursor: none;
 }
 
 .button-spinner {
@@ -695,6 +747,15 @@ body {
         font-size: 2rem;
     }
 
+    .cursor,
+    .cursor-follower {
+        display: none;
+    }
+
+    body {
+        cursor: auto;
+    }
+
     .cards-grid {
         grid-template-columns: 1fr;
     }
@@ -714,15 +775,23 @@ body {
     .loading-progress {
         width: 250px;
     }
+
     .api-status {
         top: 10px;
         right: 10px;
         font-size: 0.7rem;
         padding: 6px 10px;
     }
-    
+
     .action-buttons {
         flex-direction: column;
         align-items: center;
     }
+}
+
+.instructions {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    opacity: 0.9;
 }

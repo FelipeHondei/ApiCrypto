@@ -9,6 +9,8 @@
 </head>
 
 <body>
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
     <div class="floating-shapes"></div>
     <div class="crypto-rain" id="cryptoRain"></div>
 
@@ -41,14 +43,12 @@
     <div class="header">
         <h1>CryptoAnalyzer</h1>
         <p>Dashboard de análise criptomoedas</p>
-    </div>
-
-    <div class="action-buttons">
+        <div class="action-buttons">
         <button class="cta-button" id="analyzeButton" onclick="analyzeMarket()">
             <span id="buttonText">Analisar Mercado</span>
         </button>
     </div>
-
+    </div>
 
 
         <div id="errorMessage" class="error-message" style="display: none;"></div>
@@ -90,13 +90,10 @@
         <div id="topPerformersSection" class="section" style="display: none;">
             <h2 class="section-title">🏆 Top Performers (24h)</h2>
             <div id="topPerformersGrid" class="cards-grid"></div>
-        </div>
-
-        <div id="lastUpdate" class="last-update" style="display: none;"></div>
-
-        <a href="https://github.com/FelipeHondei/ApiCrypto" class="cta-button" onclick="activateGlitch()">Enter the
+            <div id="lastUpdate" class="last-update" style="display: none;"></div>
+            <a href="https://github.com/FelipeHondei/ApiCrypto" class="cta-button" onclick="activateGlitch()">Enter the
             Matrix</a>
-    </div>
+        </div>
     <script src="script.js"></script>
 </body>
 
