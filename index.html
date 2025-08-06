@@ -40,34 +40,36 @@
     </div>
 
     <div class="theme-toggle-container">
-    <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
-        <div class="toggle-track">
-            <div class="toggle-thumb">
-                <div class="theme-icon">
-                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
-                    </svg>
-                    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
+        <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
+            <div class="toggle-track">
+                <div class="toggle-thumb">
+                    <div class="theme-icon">
+                        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <path
+                                d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42">
+                            </path>
+                        </svg>
+                        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </div>
                 </div>
             </div>
+            <span class="theme-label" id="themeLabel">Dark Mode</span>
         </div>
-        <span class="theme-label" id="themeLabel">Dark Mode</span>
     </div>
-</div>
 
     <div class="container" id="mainContainer">
-    <div class="header">
-        <h1>CryptoAnalyzer</h1>
-        <p>Dashboard de análise criptomoedas</p>
-        <div class="action-buttons">
-        <button class="cta-button" id="analyzeButton" onclick="analyzeMarket()">
-            <span id="buttonText">Analisar Mercado</span>
-        </button>
-    </div>
-    </div>
+        <div class="header">
+            <h1>CryptoAnalyzer</h1>
+            <p>Dashboard de análise criptomoedas</p>
+            <div class="action-buttons">
+                <button class="cta-button" id="analyzeButton" onclick="analyzeMarket()">
+                    <span id="buttonText">Analisar Mercado</span>
+                </button>
+            </div>
+        </div>
 
 
         <div id="errorMessage" class="error-message" style="display: none;"></div>
@@ -109,11 +111,43 @@
         <div id="topPerformersSection" class="section" style="display: none;">
             <h2 class="section-title">🏆 Top Performers (24h)</h2>
             <div id="topPerformersGrid" class="cards-grid"></div>
+        </div>
+        <div id="allCoinsSection" class="section" style="display: none;">
+            <h2 class="section-title">📊 Todas as Moedas (Top 100)</h2>
+            <div class="coins-table-container">
+                <div class="table-controls">
+                    <input type="text" id="coinSearch" placeholder="Buscar moeda..." class="search-input">
+                    <select id="sortSelect" class="sort-select">
+                        <option value="rank">Ranking</option>
+                        <option value="name">Nome</option>
+                        <option value="price">Preço</option>
+                        <option value="change24h">Variação 24h</option>
+                        <option value="marketCap">Market Cap</option>
+                    </select>
+                </div>
+                <div class="table-wrapper">
+                    <table class="coins-table" id="coinsTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Moeda</th>
+                                <th>Preço</th>
+                                <th>24h %</th>
+                                <th>7d %</th>
+                                <th>Market Cap</th>
+                            </tr>
+                        </thead>
+                        <tbody id="coinsTableBody">
+                            <!-- Dados serão inseridos aqui via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <div id="lastUpdate" class="last-update" style="display: none;"></div>
             <a href="https://github.com/FelipeHondei/ApiCrypto" class="cta-button" onclick="activateGlitch()">Enter the
-            Matrix</a>
+                Matrix</a>
         </div>
-    <script src="script.js"></script>
+        <script src="script.js"></script>
 </body>
 
 </html>

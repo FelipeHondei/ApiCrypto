@@ -4,7 +4,10 @@ let analysisData = {
     topPerformers: [],
     lastUpdate: null
 };
-
+let allCoinsData = [];
+let filteredCoinsData = [];
+let currentSortBy = 'rank';
+let currentSortOrder = 'asc';
 let autoRefreshInterval = null;
 let isAutoRefreshing = false;
 
@@ -231,16 +234,16 @@ if (window.innerWidth <= 768) {
 
 // Mock data para demonstração quando a API falhar
 const mockCryptoData = [
-    { name: "Bitcoin", symbol: "BTC", price_usd: "$ 45320.50", percent_change_24h: "2.45", percent_change_7d: "5.20", rank: "1", market_cap_usd: "850000000000" },
-    { name: "Ethereum", symbol: "ETH", price_usd: "$ 3240.80", percent_change_24h: "1.85", percent_change_7d: "3.75", rank: "2", market_cap_usd: "390000000000" },
-    { name: "Cardano", symbol: "ADA", price_usd: "$ 1.25", percent_change_24h: "-0.85", percent_change_7d: "4.20", rank: "3", market_cap_usd: "42000000000" },
-    { name: "Solana", symbol: "SOL", price_usd: "$ 95.40", percent_change_24h: "8.50", percent_change_7d: "12.30", rank: "4", market_cap_usd: "38000000000" },
-    { name: "Polkadot", symbol: "DOT", price_usd: "$ 24.60", percent_change_24h: "-1.20", percent_change_7d: "6.80", rank: "5", market_cap_usd: "24000000000" },
-    { name: "Chainlink", symbol: "LINK", price_usd: "$ 28.30", percent_change_24h: "3.40", percent_change_7d: "8.90", rank: "6", market_cap_usd: "13000000000" },
-    { name: "Litecoin", symbol: "LTC", price_usd: "$ 165.20", percent_change_24h: "1.60", percent_change_7d: "2.30", rank: "7", market_cap_usd: "12000000000" },
-    { name: "Avalanche", symbol: "AVAX", price_usd: "$ 78.90", percent_change_24h: "12.80", percent_change_7d: "18.50", rank: "8", market_cap_usd: "18000000000" },
-    { name: "Polygon", symbol: "MATIC", price_usd: "$ 1.85", percent_change_24h: "6.20", percent_change_7d: "15.40", rank: "9", market_cap_usd: "14000000000" },
-    { name: "Cosmos", symbol: "ATOM", price_usd: "$ 32.40", percent_change_24h: "-2.10", percent_change_7d: "7.60", rank: "10", market_cap_usd: "9200000000" }
+    { name: "Bitcoin", symbol: "BTC", price_usd: "45320.50", percent_change_24h: "2.45", percent_change_7d: "5.20", rank: "1", market_cap_usd: "850000000000" },
+    { name: "Ethereum", symbol: "ETH", price_usd: "3240.80", percent_change_24h: "1.85", percent_change_7d: "3.75", rank: "2", market_cap_usd: "390000000000" },
+    { name: "Cardano", symbol: "ADA", price_usd: "1.25", percent_change_24h: "-0.85", percent_change_7d: "4.20", rank: "3", market_cap_usd: "42000000000" },
+    { name: "Solana", symbol: "SOL", price_usd: "95.40", percent_change_24h: "8.50", percent_change_7d: "12.30", rank: "4", market_cap_usd: "38000000000" },
+    { name: "Polkadot", symbol: "DOT", price_usd: "24.60", percent_change_24h: "-1.20", percent_change_7d: "6.80", rank: "5", market_cap_usd: "24000000000" },
+    { name: "Chainlink", symbol: "LINK", price_usd: "28.30", percent_change_24h: "3.40", percent_change_7d: "8.90", rank: "6", market_cap_usd: "13000000000" },
+    { name: "Litecoin", symbol: "LTC", price_usd: "165.20", percent_change_24h: "1.60", percent_change_7d: "2.30", rank: "7", market_cap_usd: "12000000000" },
+    { name: "Avalanche", symbol: "AVAX", price_usd: "78.90", percent_change_24h: "12.80", percent_change_7d: "18.50", rank: "8", market_cap_usd: "18000000000" },
+    { name: "Polygon", symbol: "MATIC", price_usd: "1.85", percent_change_24h: "6.20", percent_change_7d: "15.40", rank: "9", market_cap_usd: "14000000000" },
+    { name: "Cosmos", symbol: "ATOM", price_usd: "32.40", percent_change_24h: "-2.10", percent_change_7d: "7.60", rank: "10", market_cap_usd: "9200000000" }
 ];
 
 async function fetchCryptoData() {
@@ -279,26 +282,46 @@ function updateStatus(status) {
 }
 
 function analyzeMarketData(cryptoData) {
+    if (!cryptoData || cryptoData.length === 0) {
+        console.warn('Dados de criptomoedas vazios ou inválidos');
+        return {
+            highPerformers: [],
+            opportunities: [],
+            topPerformers: [],
+            lastUpdate: new Date()
+        };
+    }
+
     const highPerformers = [];
     const opportunities = [];
     const topPerformers = [];
 
-    cryptoData.forEach(coin => {
-        const change24h = parseFloat(coin.percent_change_24h) || 0;
-        const change7d = parseFloat(coin.percent_change_7d) || 0;
-        const price = parseFloat(coin.price_usd) || 0;
-        const rank = parseInt(coin.rank) || 0;
+    cryptoData.forEach((coin, index) => {
+        // Tentar diferentes propriedades da API
+        const change24h = parseFloat(coin.percent_change_24h || coin.change24h || 0);
+        const change7d = parseFloat(coin.percent_change_7d || coin.change7d || 0);
+        
+        // Limpar e converter preço
+        let priceValue = coin.price_usd || coin.price || '0';
+        if (typeof priceValue === 'string') {
+            priceValue = priceValue.replace(/[$,]/g, '');
+        }
+        const price = parseFloat(priceValue) || 0;
+        
+        const rank = parseInt(coin.rank) || (index + 1);
+        const marketCap = parseFloat(coin.market_cap_usd || coin.marketCap || 0);
 
         const coinData = {
-            name: coin.name,
-            symbol: coin.symbol,
+            name: coin.name || 'Unknown',
+            symbol: coin.symbol || 'N/A',
             price: price,
             change24h: change24h,
             change7d: change7d,
             rank: rank,
-            marketCap: parseFloat(coin.market_cap_usd) || 0
+            marketCap: marketCap
         };
 
+        // Categorizar moedas baseado nos critérios
         if (change24h > 0) {
             highPerformers.push(coinData);
         }
@@ -312,6 +335,7 @@ function analyzeMarketData(cryptoData) {
         }
     });
 
+    // Ordenar arrays
     highPerformers.sort((a, b) => b.change24h - a.change24h);
     opportunities.sort((a, b) => b.change7d - a.change7d);
     topPerformers.sort((a, b) => b.change24h - a.change24h);
@@ -329,37 +353,46 @@ function createCryptoCard(coin, index = 0) {
     const change24hClass = coin.change24h > 0 ? 'positive' : coin.change24h < 0 ? 'negative' : 'neutral';
     const change7dClass = coin.change7d > 0 ? 'positive' : coin.change7d < 0 ? 'negative' : 'neutral';
 
-    const rankBadge = coin.rank <= 10 ? `<div class="rank-badge">${coin.rank}</div>` : '';
+    const rankBadge = (coin.rank && coin.rank <= 10) ? `<div class="rank-badge">${coin.rank}</div>` : '';
 
     return `
-                <div class="crypto-card" style="animation-delay: ${index * 0.1}s">
-                    ${rankBadge}
-                    <div class="crypto-header">
-                        <div class="crypto-name">${coin.name}</div>
-                        <div class="crypto-symbol">${coin.symbol}</div>
-                    </div>
-                    <div class="crypto-price">$ ${priceFormatted}</div>
-                    <div class="crypto-changes">
-                        <div class="change-item">
-                            <div class="change-label">24h</div>
-                            <div class="change-value ${change24hClass}">${formatPercentage(coin.change24h)}</div>
-                        </div>
-                        <div class="change-item">
-                            <div class="change-label">7d</div>
-                            <div class="change-value ${change7dClass}">${formatPercentage(coin.change7d)}</div>
-                        </div>
-                    </div>
+        <div class="crypto-card" style="animation-delay: ${index * 0.1}s">
+            ${rankBadge}
+            <div class="crypto-header">
+                <div class="crypto-name">${coin.name || 'N/A'}</div>
+                <div class="crypto-symbol">${coin.symbol || 'N/A'}</div>
+            </div>
+            <div class="crypto-price">$${priceFormatted}</div>
+            <div class="crypto-changes">
+                <div class="change-item">
+                    <div class="change-label">24h</div>
+                    <div class="change-value ${change24hClass}">${formatPercentage(coin.change24h)}</div>
                 </div>
-            `;
+                <div class="change-item">
+                    <div class="change-label">7d</div>
+                    <div class="change-value ${change7dClass}">${formatPercentage(coin.change7d)}</div>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 function formatPrice(price) {
-    if (price >= 1) {
-        return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    } else if (price >= 0.01) {
-        return price.toFixed(4);
+    // Verificar se price é válido
+    if (price === null || price === undefined || isNaN(price) || price === 0) {
+        return '0.00';
+    }
+    
+    const numPrice = parseFloat(price);
+    
+    if (numPrice >= 1) {
+        return numPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    } else if (numPrice >= 0.01) {
+        return numPrice.toFixed(4);
+    } else if (numPrice > 0) {
+        return numPrice.toFixed(8);
     } else {
-        return price.toFixed(8);
+        return '0.00';
     }
 }
 
@@ -434,6 +467,231 @@ function displayResults(data) {
     lastUpdate.style.display = 'block';
 }
 
+function displayAllCoins(data) {
+    if (!data || data.length === 0) {
+        console.warn('Dados vazios para displayAllCoins');
+        return;
+    }
+
+    // Processar dados para garantir compatibilidade
+    const processedData = data.map((coin, index) => ({
+        name: coin.name || 'Unknown',
+        symbol: coin.symbol || 'N/A',
+        price: parseFloat(coin.price_usd || coin.price || 0),
+        change24h: parseFloat(coin.percent_change_24h || coin.change24h || 0),
+        change7d: parseFloat(coin.percent_change_7d || coin.change7d || 0),
+        rank: parseInt(coin.rank) || (index + 1),
+        marketCap: parseFloat(coin.market_cap_usd || coin.marketCap || 0)
+    }));
+
+    allCoinsData = [...processedData];
+    filteredCoinsData = [...processedData];
+    
+    // Renderizar tabela
+    renderCoinsTable();
+    
+    // Mostrar seção
+    const allCoinsSection = document.getElementById('allCoinsSection');
+    if (allCoinsSection) {
+        allCoinsSection.style.display = 'block';
+        setTimeout(() => {
+            allCoinsSection.classList.add('loaded');
+        }, 500);
+    }
+    
+    // Setup event listeners
+    setupTableEventListeners();
+}
+
+function fixSelectStyling() {
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+        // Forçar estilo correto
+        sortSelect.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary');
+        sortSelect.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
+        sortSelect.style.border = '1px solid ' + getComputedStyle(document.documentElement).getPropertyValue('--border-primary');
+        
+        // Aplicar estilo às opções
+        Array.from(sortSelect.options).forEach(option => {
+            option.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary');
+            option.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
+        });
+    }
+}
+
+function renderCoinsTable() {
+    const tbody = document.getElementById('coinsTableBody');
+    
+    if (!tbody) {
+        console.error('Elemento coinsTableBody não encontrado');
+        return;
+    }
+    
+    if (!filteredCoinsData || filteredCoinsData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">Nenhuma moeda encontrada</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = filteredCoinsData.map(coin => {
+        // Garantir que os dados existem e são válidos
+        const coinName = coin.name || 'N/A';
+        const coinSymbol = coin.symbol || 'N/A';
+        const coinRank = coin.rank || 0;
+        const coinPrice = parseFloat(coin.price || coin.price_usd || 0);
+        const change24h = parseFloat(coin.change24h || coin.percent_change_24h || 0);
+        const change7d = parseFloat(coin.change7d || coin.percent_change_7d || 0);
+        const marketCap = parseFloat(coin.marketCap || coin.market_cap_usd || 0);
+        
+        // Definir classes de cor baseadas nos valores
+        const change24hClass = change24h > 0 ? 'change-positive' : change24h < 0 ? 'change-negative' : 'change-neutral';
+        const change7dClass = change7d > 0 ? 'change-positive' : change7d < 0 ? 'change-negative' : 'change-neutral';
+        
+        return `
+            <tr data-coin="${coinSymbol}" style="background: transparent;">
+                <td style="color: var(--accent-primary); font-weight: 700;"><span class="coin-rank">${coinRank}</span></td>
+                <td>
+                    <div class="coin-info">
+                        <span class="coin-symbol">${coinSymbol}</span>
+                        <span class="coin-name">${coinName}</span>
+                    </div>
+                </td>
+                <td class="coin-price" style="color: var(--accent-primary); font-weight: 600;">$${formatPrice(coinPrice)}</td>
+                <td class="${change24hClass}" style="font-weight: 600;">${formatPercentage(change24h)}</td>
+                <td class="${change7dClass}" style="font-weight: 600;">${formatPercentage(change7d)}</td>
+                <td class="market-cap" style="color: var(--text-secondary);">$${formatMarketCap(marketCap)}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function formatMarketCap(marketCap) {
+    // Verificar se marketCap é válido
+    if (marketCap === null || marketCap === undefined || isNaN(marketCap) || marketCap === 0) {
+        return '0';
+    }
+    
+    const numMarketCap = parseFloat(marketCap);
+    
+    if (numMarketCap >= 1e12) {
+        return (numMarketCap / 1e12).toFixed(2) + 'T';
+    } else if (numMarketCap >= 1e9) {
+        return (numMarketCap / 1e9).toFixed(2) + 'B';
+    } else if (numMarketCap >= 1e6) {
+        return (numMarketCap / 1e6).toFixed(2) + 'M';
+    } else if (numMarketCap >= 1e3) {
+        return (numMarketCap / 1e3).toFixed(2) + 'K';
+    }
+    return numMarketCap.toFixed(2);
+}
+
+function setupTableEventListeners() {
+    const searchInput = document.getElementById('coinSearch');
+    const sortSelect = document.getElementById('sortSelect');
+    
+    // Search functionality
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            filteredCoinsData = allCoinsData.filter(coin => 
+                coin.name.toLowerCase().includes(searchTerm) || 
+                coin.symbol.toLowerCase().includes(searchTerm)
+            );
+            sortCoinsData();
+            renderCoinsTable();
+        });
+    }
+    
+    // Sort functionality
+    if (sortSelect) {
+        sortSelect.addEventListener('change', (e) => {
+            currentSortBy = e.target.value;
+            sortCoinsData();
+            renderCoinsTable();
+        });
+    }
+    
+    // Click on table rows for interaction
+    const tableBody = document.getElementById('coinsTableBody');
+    if (tableBody) {
+        tableBody.addEventListener('click', (e) => {
+            const row = e.target.closest('tr');
+            if (row && row.dataset.coin) {
+                const coinSymbol = row.dataset.coin;
+                highlightCoin(coinSymbol);
+            }
+        });
+    }
+}
+
+function sortCoinsData() {
+    filteredCoinsData.sort((a, b) => {
+        let aValue = a[currentSortBy];
+        let bValue = b[currentSortBy];
+        
+        // Conversão para números quando necessário
+        if (currentSortBy === 'price' || currentSortBy === 'change24h' || currentSortBy === 'marketCap' || currentSortBy === 'rank') {
+            aValue = parseFloat(aValue) || 0;
+            bValue = parseFloat(bValue) || 0;
+        }
+        
+        // Ordenação por string (nome)
+        if (currentSortBy === 'name') {
+            return currentSortOrder === 'asc' 
+                ? aValue.localeCompare(bValue)
+                : bValue.localeCompare(aValue);
+        }
+        
+        // Ordenação numérica
+        if (currentSortOrder === 'asc') {
+            return aValue - bValue;
+        } else {
+            return bValue - aValue;
+        }
+    });
+}
+
+function highlightCoin(symbol) {
+    // Remove highlight anterior
+    document.querySelectorAll('.coin-highlighted').forEach(el => {
+        el.classList.remove('coin-highlighted');
+    });
+    
+    // Adiciona highlight à linha clicada
+    const targetRow = document.querySelector(`tr[data-coin="${symbol}"]`);
+    if (targetRow) {
+        targetRow.classList.add('coin-highlighted');
+        
+        // Remove highlight após 3 segundos
+        setTimeout(() => {
+            targetRow.classList.remove('coin-highlighted');
+        }, 3000);
+    }
+    
+    // Scroll suave para mostrar outras seções dessa moeda
+    scrollToOtherCoinSections(symbol);
+}
+
+function scrollToOtherCoinSections(symbol) {
+    // Procura pela moeda nas outras seções e destaca
+    const sections = ['highPerformersGrid', 'opportunitiesGrid', 'topPerformersGrid'];
+    
+    sections.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        if (section) {
+            const cards = section.querySelectorAll('.crypto-card');
+            cards.forEach(card => {
+                const cardSymbol = card.querySelector('.crypto-symbol')?.textContent;
+                if (cardSymbol === symbol) {
+                    card.classList.add('coin-highlighted');
+                    setTimeout(() => {
+                        card.classList.remove('coin-highlighted');
+                    }, 3000);
+                }
+            });
+        }
+    });
+}
+
 function showError(message) {
     const errorElement = document.getElementById('errorMessage');
     errorElement.textContent = `❌ ${message}`;
@@ -466,6 +724,9 @@ async function analyzeMarket() {
 
         const analysisResults = analyzeMarketData(cryptoData);
         displayResults(analysisResults);
+        
+        // ADICIONE esta linha após displayResults:
+        displayAllCoins(cryptoData);
 
     } catch (error) {
         console.error('Erro na análise:', error);
@@ -844,4 +1105,20 @@ function setThemeWithMotionPreference(theme) {
 // Export para uso em outros módulos (se usando módulos ES6)
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { ThemeManager, toggleTheme, getCurrentTheme, setTheme };
+}
+document.addEventListener('themeChanged', () => {
+    setTimeout(fixSelectStyling, 100);
+});
+
+// Chamar quando a página carregar
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(fixSelectStyling, 100);
+});
+
+// Forçar atualização da tabela quando necessário
+function forceTableUpdate() {
+    if (allCoinsData.length > 0) {
+        renderCoinsTable();
+        fixSelectStyling();
+    }
 }
