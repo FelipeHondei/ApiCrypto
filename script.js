@@ -550,32 +550,28 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// ==============================================
-// THEME MANAGEMENT SYSTEM
-// ==============================================
-
 class ThemeManager {
     constructor() {
         this.currentTheme = this.getStoredTheme() || this.getPreferredTheme();
         this.themeToggle = null;
         this.themeLabel = null;
         this.isTransitioning = false;
-        
+
         this.init();
     }
-    
+
     init() {
         this.setTheme(this.currentTheme);
         this.setupToggle();
         this.setupSystemThemeListener();
         this.setupKeyboardShortcuts();
     }
-    
+
     getPreferredTheme() {
         // Detecta preferência do sistema
         return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
     }
-    
+
     getStoredTheme() {
         try {
             return localStorage.getItem('crypto-analyzer-theme');
@@ -584,7 +580,7 @@ class ThemeManager {
             return null;
         }
     }
-    
+
     storeTheme(theme) {
         try {
             localStorage.setItem('crypto-analyzer-theme', theme);
@@ -592,47 +588,47 @@ class ThemeManager {
             console.warn('Não foi possível salvar a preferência de tema');
         }
     }
-    
+
     setTheme(theme) {
         const root = document.documentElement;
         const body = document.body;
-        
+
         // Adiciona classe para desabilitar transições durante a mudança
         body.classList.add('theme-switching');
-        
+
         // Define o tema
         root.setAttribute('data-theme', theme);
         this.currentTheme = theme;
-        
+
         // Remove classe após um frame para reativar transições
         requestAnimationFrame(() => {
             body.classList.remove('theme-switching');
         });
-        
+
         // Atualiza elementos específicos
         this.updateThemeElements(theme);
-        
+
         // Salva preferência
         this.storeTheme(theme);
-        
+
         // Dispara evento customizado
         this.dispatchThemeEvent(theme);
     }
-    
+
     updateThemeElements(theme) {
         if (!this.themeLabel) return;
-        
+
         // Atualiza texto do label
         this.themeLabel.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
-        
+
         // Atualiza aria-label para acessibilidade
         if (this.themeToggle) {
-            this.themeToggle.setAttribute('aria-label', 
+            this.themeToggle.setAttribute('aria-label',
                 `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`
             );
         }
     }
-    
+
     setupToggle() {
         // Aguarda o DOM estar pronto
         if (document.readyState === 'loading') {
@@ -641,16 +637,16 @@ class ThemeManager {
             this.initToggleElements();
         }
     }
-    
+
     initToggleElements() {
         this.themeToggle = document.getElementById('themeToggle');
         this.themeLabel = document.getElementById('themeLabel');
-        
+
         if (this.themeToggle && this.themeLabel) {
             this.updateThemeElements(this.currentTheme);
         }
     }
-    
+
     setupSystemThemeListener() {
         // Escuta mudanças na preferência do sistema
         const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
@@ -661,7 +657,7 @@ class ThemeManager {
             }
         });
     }
-    
+
     setupKeyboardShortcuts() {
         document.addEventListener('keydown', (e) => {
             // Ctrl/Cmd + Shift + T para alternar tema
@@ -671,23 +667,23 @@ class ThemeManager {
             }
         });
     }
-    
+
     toggleTheme() {
         if (this.isTransitioning) return;
-        
+
         this.isTransitioning = true;
         const newTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
-        
+
         // Adiciona efeito visual de transição
         this.addToggleEffect();
-        
+
         // Pequeno delay para o efeito visual
         setTimeout(() => {
             this.setTheme(newTheme);
             this.isTransitioning = false;
         }, 150);
     }
-    
+
     addToggleEffect() {
         // Efeito de "flash" suave durante a transição
         const overlay = document.createElement('div');
@@ -703,15 +699,15 @@ class ThemeManager {
             z-index: 9999;
             transition: opacity 0.15s ease;
         `;
-        
+
         document.body.appendChild(overlay);
-        
+
         // Trigger reflow
         overlay.offsetHeight;
-        
+
         // Fade in
         overlay.style.opacity = '0.1';
-        
+
         setTimeout(() => {
             overlay.style.opacity = '0';
             setTimeout(() => {
@@ -719,19 +715,19 @@ class ThemeManager {
             }, 150);
         }, 75);
     }
-    
+
     dispatchThemeEvent(theme) {
         const event = new CustomEvent('themeChanged', {
             detail: { theme, previousTheme: this.currentTheme === 'dark' ? 'light' : 'dark' }
         });
         document.dispatchEvent(event);
     }
-    
+
     // Método público para obter tema atual
     getCurrentTheme() {
         return this.currentTheme;
     }
-    
+
     // Método público para definir tema programaticamente
     setThemeManual(theme) {
         if (['dark', 'light'].includes(theme)) {
@@ -740,14 +736,8 @@ class ThemeManager {
     }
 }
 
-// ==============================================
-// INTEGRAÇÃO COM O SISTEMA EXISTENTE
-// ==============================================
-
-// Instância global do gerenciador de temas
 let themeManager;
 
-// Função global para alternar tema (chamada pelo onclick do HTML)
 function toggleTheme() {
     if (themeManager) {
         themeManager.toggleTheme();
@@ -757,23 +747,19 @@ function toggleTheme() {
 // Inicialização quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', () => {
     themeManager = new ThemeManager();
-    
+
     // Integra com o sistema de loading existente
     integrateWithLoadingSystem();
-    
+
     // Integra com efeitos visuais existentes
     integrateWithVisualEffects();
 });
-
-// ==============================================
-// INTEGRAÇÕES ESPECÍFICAS
-// ==============================================
 
 function integrateWithLoadingSystem() {
     // Escuta mudanças de tema para atualizar loading screen
     document.addEventListener('themeChanged', (e) => {
         const { theme } = e.detail;
-        
+
         // Atualiza cores do loading screen se estiver ativo
         const loadingScreen = document.getElementById('loadingScreen');
         if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
@@ -785,13 +771,13 @@ function integrateWithLoadingSystem() {
 function updateLoadingScreenTheme(theme) {
     const progressBar = document.getElementById('progressBar');
     const cryptoRain = document.getElementById('cryptoRain');
-    
+
     if (progressBar) {
-        progressBar.style.background = theme === 'dark' 
+        progressBar.style.background = theme === 'dark'
             ? 'linear-gradient(90deg, #00d4ff, #1e90ff, #7b68ee)'
             : 'linear-gradient(90deg, #0066cc, #0080ff, #4d79ff)';
     }
-    
+
     // Atualiza opacidade da chuva de crypto para light mode
     if (cryptoRain) {
         const columns = cryptoRain.querySelectorAll('.crypto-column');
@@ -812,7 +798,7 @@ function integrateWithVisualEffects() {
 function updateVisualEffectsTheme(theme) {
     // Atualiza variáveis CSS customizadas para efeitos
     const root = document.documentElement;
-    
+
     if (theme === 'light') {
         root.style.setProperty('--particle-color', '#1a1a1a');
         root.style.setProperty('--glow-color', 'rgba(0, 102, 204, 0.15)');
@@ -821,10 +807,6 @@ function updateVisualEffectsTheme(theme) {
         root.style.setProperty('--glow-color', 'rgba(0, 212, 255, 0.2)');
     }
 }
-
-// ==============================================
-// UTILITY FUNCTIONS
-// ==============================================
 
 // Função para outros scripts obterem o tema atual
 function getCurrentTheme() {
@@ -851,12 +833,8 @@ function setThemeWithMotionPreference(theme) {
     setTheme(theme);
 }
 
-// ==============================================
-// EVENT LISTENERS ADICIONAIS
-// ==============================================
-
 // Previne flash of unstyled content
-(function() {
+(function () {
     const savedTheme = localStorage.getItem('crypto-analyzer-theme');
     if (savedTheme) {
         document.documentElement.setAttribute('data-theme', savedTheme);
