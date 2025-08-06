@@ -231,16 +231,16 @@ if (window.innerWidth <= 768) {
 
 // Mock data para demonstração quando a API falhar
 const mockCryptoData = [
-    { name: "Bitcoin", symbol: "BTC", price_usd: "45320.50", percent_change_24h: "2.45", percent_change_7d: "5.20", rank: "1", market_cap_usd: "850000000000" },
-    { name: "Ethereum", symbol: "ETH", price_usd: "3240.80", percent_change_24h: "1.85", percent_change_7d: "3.75", rank: "2", market_cap_usd: "390000000000" },
-    { name: "Cardano", symbol: "ADA", price_usd: "1.25", percent_change_24h: "-0.85", percent_change_7d: "4.20", rank: "3", market_cap_usd: "42000000000" },
-    { name: "Solana", symbol: "SOL", price_usd: "95.40", percent_change_24h: "8.50", percent_change_7d: "12.30", rank: "4", market_cap_usd: "38000000000" },
-    { name: "Polkadot", symbol: "DOT", price_usd: "24.60", percent_change_24h: "-1.20", percent_change_7d: "6.80", rank: "5", market_cap_usd: "24000000000" },
-    { name: "Chainlink", symbol: "LINK", price_usd: "28.30", percent_change_24h: "3.40", percent_change_7d: "8.90", rank: "6", market_cap_usd: "13000000000" },
-    { name: "Litecoin", symbol: "LTC", price_usd: "165.20", percent_change_24h: "1.60", percent_change_7d: "2.30", rank: "7", market_cap_usd: "12000000000" },
-    { name: "Avalanche", symbol: "AVAX", price_usd: "78.90", percent_change_24h: "12.80", percent_change_7d: "18.50", rank: "8", market_cap_usd: "18000000000" },
-    { name: "Polygon", symbol: "MATIC", price_usd: "1.85", percent_change_24h: "6.20", percent_change_7d: "15.40", rank: "9", market_cap_usd: "14000000000" },
-    { name: "Cosmos", symbol: "ATOM", price_usd: "32.40", percent_change_24h: "-2.10", percent_change_7d: "7.60", rank: "10", market_cap_usd: "9200000000" }
+    { name: "Bitcoin", symbol: "BTC", price_usd: "$ 45320.50", percent_change_24h: "2.45", percent_change_7d: "5.20", rank: "1", market_cap_usd: "850000000000" },
+    { name: "Ethereum", symbol: "ETH", price_usd: "$ 3240.80", percent_change_24h: "1.85", percent_change_7d: "3.75", rank: "2", market_cap_usd: "390000000000" },
+    { name: "Cardano", symbol: "ADA", price_usd: "$ 1.25", percent_change_24h: "-0.85", percent_change_7d: "4.20", rank: "3", market_cap_usd: "42000000000" },
+    { name: "Solana", symbol: "SOL", price_usd: "$ 95.40", percent_change_24h: "8.50", percent_change_7d: "12.30", rank: "4", market_cap_usd: "38000000000" },
+    { name: "Polkadot", symbol: "DOT", price_usd: "$ 24.60", percent_change_24h: "-1.20", percent_change_7d: "6.80", rank: "5", market_cap_usd: "24000000000" },
+    { name: "Chainlink", symbol: "LINK", price_usd: "$ 28.30", percent_change_24h: "3.40", percent_change_7d: "8.90", rank: "6", market_cap_usd: "13000000000" },
+    { name: "Litecoin", symbol: "LTC", price_usd: "$ 165.20", percent_change_24h: "1.60", percent_change_7d: "2.30", rank: "7", market_cap_usd: "12000000000" },
+    { name: "Avalanche", symbol: "AVAX", price_usd: "$ 78.90", percent_change_24h: "12.80", percent_change_7d: "18.50", rank: "8", market_cap_usd: "18000000000" },
+    { name: "Polygon", symbol: "MATIC", price_usd: "$ 1.85", percent_change_24h: "6.20", percent_change_7d: "15.40", rank: "9", market_cap_usd: "14000000000" },
+    { name: "Cosmos", symbol: "ATOM", price_usd: "$ 32.40", percent_change_24h: "-2.10", percent_change_7d: "7.60", rank: "10", market_cap_usd: "9200000000" }
 ];
 
 async function fetchCryptoData() {
@@ -338,7 +338,7 @@ function createCryptoCard(coin, index = 0) {
                         <div class="crypto-name">${coin.name}</div>
                         <div class="crypto-symbol">${coin.symbol}</div>
                     </div>
-                    <div class="crypto-price">${priceFormatted}</div>
+                    <div class="crypto-price">$ ${priceFormatted}</div>
                     <div class="crypto-changes">
                         <div class="change-item">
                             <div class="change-label">24h</div>
