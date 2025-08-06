@@ -31,25 +31,25 @@
     </div>
 
     <div class="api-status">
-            <div class="status-indicator">
-                <div id="statusDot" class="status-dot"></div>
-                <span id="statusText">Desconectado da API</span>
-            </div>
-            <button class="load-button" id="analyzeButton" onclick="analyzeMarket()">
-                <span id="buttonText">Analisar Mercado</span>
-            </button>
-            <button class="load-button" onclick="autoRefresh()" id="autoRefreshBtn">
-                ⏰ Auto Refresh (OFF)
-            </button>
+        <div class="status-indicator">
+            <div id="statusDot" class="status-dot"></div>
+            <span id="statusText"></span>
         </div>
+    </div>
 
     <div class="container" id="mainContainer">
-        <div class="header">
-            <h1>CryptoAnalyzer</h1>
-            <p>Dashboard de análise criptomoedas</p>
-        </div>
+    <div class="header">
+        <h1>CryptoAnalyzer</h1>
+        <p>Dashboard de análise criptomoedas</p>
+    </div>
 
-        
+    <div class="action-buttons">
+        <button class="cta-button" id="analyzeButton" onclick="analyzeMarket()">
+            <span id="buttonText">Analisar Mercado</span>
+        </button>
+    </div>
+
+
 
         <div id="errorMessage" class="error-message" style="display: none;"></div>
 
@@ -94,7 +94,8 @@
 
         <div id="lastUpdate" class="last-update" style="display: none;"></div>
 
-        <a href="#" class="cta-button" onclick="activateGlitch()">Enter the Matrix</a>
+        <a href="https://github.com/FelipeHondei/ApiCrypto" class="cta-button" onclick="activateGlitch()">Enter the
+            Matrix</a>
     </div>
     <script src="script.js"></script>
 </body>

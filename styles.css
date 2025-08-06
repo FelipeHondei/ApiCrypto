@@ -248,13 +248,19 @@ body {
 }
 
 .api-status {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border-radius: 16px;
-    padding: 20px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+.action-buttons {
     text-align: center;
-    margin-bottom: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
 .status-indicator {
@@ -707,5 +713,16 @@ body {
 
     .loading-progress {
         width: 250px;
+    }
+    .api-status {
+        top: 10px;
+        right: 10px;
+        font-size: 0.7rem;
+        padding: 6px 10px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        align-items: center;
     }
 }

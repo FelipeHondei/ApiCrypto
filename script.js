@@ -160,16 +160,14 @@ async function fetchCryptoData() {
     }
 }
 
-function updateStatus(status, message) {
+function updateStatus(status) {
     const statusDot = document.getElementById('statusDot');
-    const statusText = document.getElementById('statusText');
+    
 
     statusDot.className = 'status-dot';
     if (status === 'connected') {
         statusDot.classList.add('connected');
     }
-
-    statusText.textContent = message;
 }
 
 function analyzeMarketData(cryptoData) {
@@ -366,7 +364,7 @@ async function analyzeMarket() {
     } finally {
         // Re-enable button
         button.disabled = false;
-        buttonText.textContent = 'Analisar Mercado';
+        buttonText.textContent = 'Atualizar';
     }
 }
 
