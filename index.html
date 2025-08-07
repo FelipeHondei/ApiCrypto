@@ -31,14 +31,18 @@
             <div class="loading-status" id="loadingStatus">Inicializando sistema...</div>
         </div>
     </div>
+    <!-- Loading Screen End -->
 
+    <!-- status da API -->
     <div class="api-status">
         <div class="status-indicator">
             <div id="statusDot" class="status-dot"></div>
             <span id="statusText"></span>
         </div>
     </div>
+    <!-- status da API -->
 
+    <!-- Theme button -->
     <div class="theme-toggle-container">
         <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
             <div class="toggle-track">
@@ -59,7 +63,9 @@
             <span class="theme-label" id="themeLabel">Dark Mode</span>
         </div>
     </div>
+    <!-- Theme button End -->
 
+    <!-- Container -->
     <div class="container" id="mainContainer">
         <div class="header">
             <h1>CryptoAnalyzer</h1>
@@ -71,9 +77,10 @@
             </div>
         </div>
 
-
+        <!-- Error Message -->
         <div id="errorMessage" class="error-message" style="display: none;"></div>
 
+        <!-- Cards Quantidade analisados End -->
         <div id="statsSection" style="display: none;">
             <div class="stats-grid" id="statsGrid">
                 <div class="stat-card">
@@ -94,7 +101,9 @@
                 </div>
             </div>
         </div>
+        <!-- Cards Quantidade analisados End -->
 
+        <!-- Cards Stats -->
         <div id="highPerformersSection" class="section" style="display: none;">
             <h2 class="section-title">🚀 Moedas em Alta (24h)</h2>
             <div id="highPerformersGrid" class="cards-grid"></div>
@@ -112,6 +121,9 @@
             <h2 class="section-title">🏆 Top Performers (24h)</h2>
             <div id="topPerformersGrid" class="cards-grid"></div>
         </div>
+        <!-- Cards Stats End -->
+
+        <!-- Table -->
         <div id="allCoinsSection" class="section" style="display: none;">
             <h2 class="section-title">📊 Todas as Moedas (Top 100)</h2>
             <div class="coins-table-container">
@@ -137,9 +149,7 @@
                                 <th>Market Cap</th>
                             </tr>
                         </thead>
-                        <tbody id="coinsTableBody">
-                            <!-- Dados serão inseridos aqui via JavaScript -->
-                        </tbody>
+                        <tbody id="coinsTableBody"></tbody>
                     </table>
                 </div>
             </div>
@@ -147,7 +157,9 @@
             <a href="https://github.com/FelipeHondei/ApiCrypto" class="cta-button" onclick="activateGlitch()">Enter the
                 Matrix</a>
         </div>
+        <!-- Table End -->
         <script src="script.js"></script>
+    <!-- Container End -->
 </body>
 
 </html>

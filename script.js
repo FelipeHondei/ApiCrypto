@@ -37,7 +37,6 @@ class LoadingManager {
     async startLoading() {
         this.createCryptoRain();
 
-        // Simula o carregamento em etapas realistas
         const steps = [15, 35, 60, 80, 95, 100];
 
         for (let i = 0; i < steps.length; i++) {
@@ -130,19 +129,15 @@ let mouseX = 0, mouseY = 0;
 let followerX = 0, followerY = 0;
 let trailElements = [];
 
-// Atualizar posição do mouse
 document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
 });
 
-// Animar cursor principal e seguidor
 function updateCursor() {
-    // Cursor principal (resposta imediata)
     cursor.style.left = mouseX + 'px';
     cursor.style.top = mouseY + 'px';
 
-    // Cursor seguidor (com atraso suave)
     followerX += (mouseX - followerX) * 0.1;
     followerY += (mouseY - followerY) * 0.1;
 
@@ -157,7 +152,7 @@ updateCursor();
 let trailTimer = 0;
 document.addEventListener('mousemove', (e) => {
     trailTimer++;
-    if (trailTimer % 3 === 0) { // Criar trilha a cada 3 movimentos
+    if (trailTimer % 3 === 0) {
         createTrail(e.clientX, e.clientY);
     }
 });
@@ -169,7 +164,6 @@ function createTrail(x, y) {
     trail.style.top = y + 'px';
     document.body.appendChild(trail);
 
-    // Animar e remover a trilha
     setTimeout(() => {
         trail.style.opacity = '0';
         trail.style.transform = 'scale(0)';
@@ -183,7 +177,6 @@ function createTrail(x, y) {
     }, 100);
 }
 
-// Criar partículas no clique
 document.addEventListener('click', (e) => {
     for (let i = 0; i < 6; i++) {
         createParticle(e.clientX, e.clientY);
@@ -202,7 +195,6 @@ function createParticle(x, y) {
 
     document.body.appendChild(particle);
 
-    // Animar partícula
     const angle = Math.random() * Math.PI * 2;
     const distance = Math.random() * 100 + 50;
     const duration = Math.random() * 1000 + 1000;
@@ -264,7 +256,6 @@ async function fetchCryptoData() {
         console.warn('API não disponível, usando dados de demonstração:', error);
         updateStatus('connected', 'Usando dados de demonstração');
 
-        // Simula delay da API
         await new Promise(resolve => setTimeout(resolve, 500));
 
         return mockCryptoData;
@@ -300,14 +291,14 @@ function analyzeMarketData(cryptoData) {
         // Tentar diferentes propriedades da API
         const change24h = parseFloat(coin.percent_change_24h || coin.change24h || 0);
         const change7d = parseFloat(coin.percent_change_7d || coin.change7d || 0);
-        
+
         // Limpar e converter preço
         let priceValue = coin.price_usd || coin.price || '0';
         if (typeof priceValue === 'string') {
             priceValue = priceValue.replace(/[$,]/g, '');
         }
         const price = parseFloat(priceValue) || 0;
-        
+
         const rank = parseInt(coin.rank) || (index + 1);
         const marketCap = parseFloat(coin.market_cap_usd || coin.marketCap || 0);
 
@@ -378,13 +369,12 @@ function createCryptoCard(coin, index = 0) {
 }
 
 function formatPrice(price) {
-    // Verificar se price é válido
     if (price === null || price === undefined || isNaN(price) || price === 0) {
         return '0.00';
     }
-    
+
     const numPrice = parseFloat(price);
-    
+
     if (numPrice >= 1) {
         return numPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     } else if (numPrice >= 0.01) {
@@ -413,16 +403,13 @@ function updateStats(data) {
 function displayResults(data) {
     analysisData = data;
 
-    // Update statistics
     updateStats(data);
 
-    // Show stats section
     document.getElementById('statsSection').style.display = 'block';
     setTimeout(() => {
         document.getElementById('statsGrid').classList.add('loaded');
     }, 100);
 
-    // Display High Performers
     if (data.highPerformers.length > 0) {
         const highPerformersGrid = document.getElementById('highPerformersGrid');
         highPerformersGrid.innerHTML = data.highPerformers
@@ -435,7 +422,6 @@ function displayResults(data) {
         }, 200);
     }
 
-    // Display Opportunities
     if (data.opportunities.length > 0) {
         const opportunitiesGrid = document.getElementById('opportunitiesGrid');
         opportunitiesGrid.innerHTML = data.opportunities
@@ -448,7 +434,6 @@ function displayResults(data) {
         }, 300);
     }
 
-    // Display Top Performers
     if (data.topPerformers.length > 0) {
         const topPerformersGrid = document.getElementById('topPerformersGrid');
         topPerformersGrid.innerHTML = data.topPerformers
@@ -461,7 +446,6 @@ function displayResults(data) {
         }, 400);
     }
 
-    // Update last update time
     const lastUpdate = document.getElementById('lastUpdate');
     lastUpdate.textContent = `Última atualização: ${data.lastUpdate.toLocaleString('pt-BR')}`;
     lastUpdate.style.display = 'block';
@@ -473,7 +457,6 @@ function displayAllCoins(data) {
         return;
     }
 
-    // Processar dados para garantir compatibilidade
     const processedData = data.map((coin, index) => ({
         name: coin.name || 'Unknown',
         symbol: coin.symbol || 'N/A',
@@ -486,11 +469,9 @@ function displayAllCoins(data) {
 
     allCoinsData = [...processedData];
     filteredCoinsData = [...processedData];
-    
-    // Renderizar tabela
+
     renderCoinsTable();
-    
-    // Mostrar seção
+
     const allCoinsSection = document.getElementById('allCoinsSection');
     if (allCoinsSection) {
         allCoinsSection.style.display = 'block';
@@ -498,42 +479,24 @@ function displayAllCoins(data) {
             allCoinsSection.classList.add('loaded');
         }, 500);
     }
-    
-    // Setup event listeners
-    setupTableEventListeners();
-}
 
-function fixSelectStyling() {
-    const sortSelect = document.getElementById('sortSelect');
-    if (sortSelect) {
-        // Forçar estilo correto
-        sortSelect.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary');
-        sortSelect.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
-        sortSelect.style.border = '1px solid ' + getComputedStyle(document.documentElement).getPropertyValue('--border-primary');
-        
-        // Aplicar estilo às opções
-        Array.from(sortSelect.options).forEach(option => {
-            option.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-secondary');
-            option.style.color = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
-        });
-    }
+    setupTableEventListeners();
 }
 
 function renderCoinsTable() {
     const tbody = document.getElementById('coinsTableBody');
-    
+
     if (!tbody) {
         console.error('Elemento coinsTableBody não encontrado');
         return;
     }
-    
+
     if (!filteredCoinsData || filteredCoinsData.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">Nenhuma moeda encontrada</td></tr>';
         return;
     }
-    
+
     tbody.innerHTML = filteredCoinsData.map(coin => {
-        // Garantir que os dados existem e são válidos
         const coinName = coin.name || 'N/A';
         const coinSymbol = coin.symbol || 'N/A';
         const coinRank = coin.rank || 0;
@@ -541,11 +504,10 @@ function renderCoinsTable() {
         const change24h = parseFloat(coin.change24h || coin.percent_change_24h || 0);
         const change7d = parseFloat(coin.change7d || coin.percent_change_7d || 0);
         const marketCap = parseFloat(coin.marketCap || coin.market_cap_usd || 0);
-        
-        // Definir classes de cor baseadas nos valores
+
         const change24hClass = change24h > 0 ? 'change-positive' : change24h < 0 ? 'change-negative' : 'change-neutral';
         const change7dClass = change7d > 0 ? 'change-positive' : change7d < 0 ? 'change-negative' : 'change-neutral';
-        
+
         return `
             <tr data-coin="${coinSymbol}" style="background: transparent;">
                 <td style="color: var(--accent-primary); font-weight: 700;"><span class="coin-rank">${coinRank}</span></td>
@@ -569,9 +531,9 @@ function formatMarketCap(marketCap) {
     if (marketCap === null || marketCap === undefined || isNaN(marketCap) || marketCap === 0) {
         return '0';
     }
-    
+
     const numMarketCap = parseFloat(marketCap);
-    
+
     if (numMarketCap >= 1e12) {
         return (numMarketCap / 1e12).toFixed(2) + 'T';
     } else if (numMarketCap >= 1e9) {
@@ -587,21 +549,19 @@ function formatMarketCap(marketCap) {
 function setupTableEventListeners() {
     const searchInput = document.getElementById('coinSearch');
     const sortSelect = document.getElementById('sortSelect');
-    
-    // Search functionality
+
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
-            filteredCoinsData = allCoinsData.filter(coin => 
-                coin.name.toLowerCase().includes(searchTerm) || 
+            filteredCoinsData = allCoinsData.filter(coin =>
+                coin.name.toLowerCase().includes(searchTerm) ||
                 coin.symbol.toLowerCase().includes(searchTerm)
             );
             sortCoinsData();
             renderCoinsTable();
         });
     }
-    
-    // Sort functionality
+
     if (sortSelect) {
         sortSelect.addEventListener('change', (e) => {
             currentSortBy = e.target.value;
@@ -609,8 +569,7 @@ function setupTableEventListeners() {
             renderCoinsTable();
         });
     }
-    
-    // Click on table rows for interaction
+
     const tableBody = document.getElementById('coinsTableBody');
     if (tableBody) {
         tableBody.addEventListener('click', (e) => {
@@ -627,21 +586,20 @@ function sortCoinsData() {
     filteredCoinsData.sort((a, b) => {
         let aValue = a[currentSortBy];
         let bValue = b[currentSortBy];
-        
+
         // Conversão para números quando necessário
         if (currentSortBy === 'price' || currentSortBy === 'change24h' || currentSortBy === 'marketCap' || currentSortBy === 'rank') {
             aValue = parseFloat(aValue) || 0;
             bValue = parseFloat(bValue) || 0;
         }
-        
+
         // Ordenação por string (nome)
         if (currentSortBy === 'name') {
-            return currentSortOrder === 'asc' 
+            return currentSortOrder === 'asc'
                 ? aValue.localeCompare(bValue)
                 : bValue.localeCompare(aValue);
         }
-        
-        // Ordenação numérica
+
         if (currentSortOrder === 'asc') {
             return aValue - bValue;
         } else {
@@ -651,30 +609,25 @@ function sortCoinsData() {
 }
 
 function highlightCoin(symbol) {
-    // Remove highlight anterior
     document.querySelectorAll('.coin-highlighted').forEach(el => {
         el.classList.remove('coin-highlighted');
     });
-    
-    // Adiciona highlight à linha clicada
+
     const targetRow = document.querySelector(`tr[data-coin="${symbol}"]`);
     if (targetRow) {
         targetRow.classList.add('coin-highlighted');
-        
-        // Remove highlight após 3 segundos
+
         setTimeout(() => {
             targetRow.classList.remove('coin-highlighted');
         }, 3000);
     }
-    
-    // Scroll suave para mostrar outras seções dessa moeda
+
     scrollToOtherCoinSections(symbol);
 }
 
 function scrollToOtherCoinSections(symbol) {
-    // Procura pela moeda nas outras seções e destaca
     const sections = ['highPerformersGrid', 'opportunitiesGrid', 'topPerformersGrid'];
-    
+
     sections.forEach(sectionId => {
         const section = document.getElementById(sectionId);
         if (section) {
@@ -706,11 +659,9 @@ async function analyzeMarket() {
     const button = document.getElementById('analyzeButton');
     const buttonText = document.getElementById('buttonText');
 
-    // Disable button and show loading
     button.disabled = true;
     buttonText.innerHTML = '<div class="button-spinner"></div>Analisando...';
 
-    // Hide error message
     document.getElementById('errorMessage').style.display = 'none';
 
     try {
@@ -724,8 +675,7 @@ async function analyzeMarket() {
 
         const analysisResults = analyzeMarketData(cryptoData);
         displayResults(analysisResults);
-        
-        // ADICIONE esta linha após displayResults:
+
         displayAllCoins(cryptoData);
 
     } catch (error) {
@@ -733,21 +683,18 @@ async function analyzeMarket() {
         showError(`Erro ao analisar mercado: ${error.message}`);
         updateStatus('error', 'Erro na conexão');
     } finally {
-        // Re-enable button
         button.disabled = false;
         buttonText.textContent = 'Atualizar';
     }
 }
 
 function activateGlitch() {
-    // Easter egg - Matrix glitch effect
     document.body.style.animation = 'glitch 0.3s ease-in-out';
 
     setTimeout(() => {
         document.body.style.animation = 'none';
     }, 300);
 
-    // Add some random floating shapes
     const shapes = document.querySelector('.floating-shapes');
     for (let i = 0; i < 12; i++) {
         const shape = document.createElement('div');
@@ -763,18 +710,15 @@ function activateGlitch() {
     }
 }
 
-// Initialize the app when page loads
 document.addEventListener('DOMContentLoaded', async () => {
     const loadingManager = new LoadingManager();
     await loadingManager.startLoading();
 
-    // Auto-analyze market on page load
     setTimeout(() => {
         analyzeMarket();
     }, 500);
 });
 
-// Create floating shapes on load
 function createFloatingShapes() {
     const shapesContainer = document.querySelector('.floating-shapes');
 
@@ -794,10 +738,8 @@ function createFloatingShapes() {
     }
 }
 
-// Initialize floating shapes
 createFloatingShapes();
 
-// Add keyboard shortcuts
 document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.key === 'r') {
         e.preventDefault();
@@ -854,35 +796,27 @@ class ThemeManager {
         const root = document.documentElement;
         const body = document.body;
 
-        // Adiciona classe para desabilitar transições durante a mudança
         body.classList.add('theme-switching');
 
-        // Define o tema
         root.setAttribute('data-theme', theme);
         this.currentTheme = theme;
 
-        // Remove classe após um frame para reativar transições
         requestAnimationFrame(() => {
             body.classList.remove('theme-switching');
         });
 
-        // Atualiza elementos específicos
         this.updateThemeElements(theme);
 
-        // Salva preferência
         this.storeTheme(theme);
 
-        // Dispara evento customizado
         this.dispatchThemeEvent(theme);
     }
 
     updateThemeElements(theme) {
         if (!this.themeLabel) return;
 
-        // Atualiza texto do label
         this.themeLabel.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
 
-        // Atualiza aria-label para acessibilidade
         if (this.themeToggle) {
             this.themeToggle.setAttribute('aria-label',
                 `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`
@@ -891,7 +825,6 @@ class ThemeManager {
     }
 
     setupToggle() {
-        // Aguarda o DOM estar pronto
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.initToggleElements());
         } else {
@@ -909,10 +842,8 @@ class ThemeManager {
     }
 
     setupSystemThemeListener() {
-        // Escuta mudanças na preferência do sistema
         const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
         mediaQuery.addListener((e) => {
-            // Só muda automaticamente se não há preferência salva
             if (!this.getStoredTheme()) {
                 this.setTheme(e.matches ? 'light' : 'dark');
             }
@@ -921,7 +852,6 @@ class ThemeManager {
 
     setupKeyboardShortcuts() {
         document.addEventListener('keydown', (e) => {
-            // Ctrl/Cmd + Shift + T para alternar tema
             if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'T') {
                 e.preventDefault();
                 this.toggleTheme();
@@ -935,10 +865,8 @@ class ThemeManager {
         this.isTransitioning = true;
         const newTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
 
-        // Adiciona efeito visual de transição
         this.addToggleEffect();
 
-        // Pequeno delay para o efeito visual
         setTimeout(() => {
             this.setTheme(newTheme);
             this.isTransitioning = false;
@@ -946,7 +874,6 @@ class ThemeManager {
     }
 
     addToggleEffect() {
-        // Efeito de "flash" suave durante a transição
         const overlay = document.createElement('div');
         overlay.style.cssText = `
             position: fixed;
@@ -984,12 +911,10 @@ class ThemeManager {
         document.dispatchEvent(event);
     }
 
-    // Método público para obter tema atual
     getCurrentTheme() {
         return this.currentTheme;
     }
 
-    // Método público para definir tema programaticamente
     setThemeManual(theme) {
         if (['dark', 'light'].includes(theme)) {
             this.setTheme(theme);
@@ -1009,19 +934,14 @@ function toggleTheme() {
 document.addEventListener('DOMContentLoaded', () => {
     themeManager = new ThemeManager();
 
-    // Integra com o sistema de loading existente
     integrateWithLoadingSystem();
-
-    // Integra com efeitos visuais existentes
     integrateWithVisualEffects();
 });
 
 function integrateWithLoadingSystem() {
-    // Escuta mudanças de tema para atualizar loading screen
     document.addEventListener('themeChanged', (e) => {
         const { theme } = e.detail;
 
-        // Atualiza cores do loading screen se estiver ativo
         const loadingScreen = document.getElementById('loadingScreen');
         if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
             updateLoadingScreenTheme(theme);
@@ -1039,7 +959,6 @@ function updateLoadingScreenTheme(theme) {
             : 'linear-gradient(90deg, #0066cc, #0080ff, #4d79ff)';
     }
 
-    // Atualiza opacidade da chuva de crypto para light mode
     if (cryptoRain) {
         const columns = cryptoRain.querySelectorAll('.crypto-column');
         columns.forEach(column => {
@@ -1049,7 +968,6 @@ function updateLoadingScreenTheme(theme) {
 }
 
 function integrateWithVisualEffects() {
-    // Atualiza cores dos efeitos visuais baseado no tema
     document.addEventListener('themeChanged', (e) => {
         const { theme } = e.detail;
         updateVisualEffectsTheme(theme);
@@ -1057,7 +975,6 @@ function integrateWithVisualEffects() {
 }
 
 function updateVisualEffectsTheme(theme) {
-    // Atualiza variáveis CSS customizadas para efeitos
     const root = document.documentElement;
 
     if (theme === 'light') {
@@ -1069,24 +986,20 @@ function updateVisualEffectsTheme(theme) {
     }
 }
 
-// Função para outros scripts obterem o tema atual
 function getCurrentTheme() {
     return themeManager ? themeManager.getCurrentTheme() : 'dark';
 }
 
-// Função para outros scripts definirem tema programaticamente
 function setTheme(theme) {
     if (themeManager) {
         themeManager.setThemeManual(theme);
     }
 }
 
-// Detecta se o usuário prefere reduced motion
 function prefersReducedMotion() {
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-// Aplica tema com animação reduzida se necessário
 function setThemeWithMotionPreference(theme) {
     if (prefersReducedMotion()) {
         document.body.classList.add('reduce-motion');
@@ -1094,7 +1007,6 @@ function setThemeWithMotionPreference(theme) {
     setTheme(theme);
 }
 
-// Previne flash of unstyled content
 (function () {
     const savedTheme = localStorage.getItem('crypto-analyzer-theme');
     if (savedTheme) {
@@ -1102,7 +1014,6 @@ function setThemeWithMotionPreference(theme) {
     }
 })();
 
-// Export para uso em outros módulos (se usando módulos ES6)
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { ThemeManager, toggleTheme, getCurrentTheme, setTheme };
 }
@@ -1110,12 +1021,10 @@ document.addEventListener('themeChanged', () => {
     setTimeout(fixSelectStyling, 100);
 });
 
-// Chamar quando a página carregar
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(fixSelectStyling, 100);
 });
 
-// Forçar atualização da tabela quando necessário
 function forceTableUpdate() {
     if (allCoinsData.length > 0) {
         renderCoinsTable();

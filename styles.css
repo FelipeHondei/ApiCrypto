@@ -13,7 +13,7 @@ body {
     overflow-x: hidden;
     cursor: none;
     background: var(--bg-primary);
-    color: var(--text-principal);
+    color: var(--text-primary);
     transition: all 0.5s ease;
 }
 
@@ -420,7 +420,7 @@ body {
     cursor: none;
     background: transparent;
     border-color: var(--accent-primary);
-    color: var(--text-principal);
+    color: var(--text-primary);
     transition: all 0.3s ease;
 }
 
@@ -492,7 +492,7 @@ body {
     margin-bottom: 10px;
     z-index: 1;
     backface-visibility: hidden;
-    color: var(--text-principal);
+    color: var(--text-primary);
 }
 
 .stat-card .value {
@@ -520,7 +520,7 @@ body {
     margin-bottom: 25px;
     padding-left: 15px;
     border-left: 4px solid #00d4ff;
-    color: var(--text-principal);
+    color: var(--text-primary);
     border-color: var(--accent-primary);
 }
 
@@ -599,7 +599,7 @@ body {
 .crypto-name {
     font-size: 1.2rem;
     font-weight: 600;
-    color: var(--text-principal);
+    color: var(--text-primary);
 }
 
 .crypto-symbol {
@@ -876,6 +876,7 @@ body {
         width: 10px;
         height: 10px;
     }
+
     .coins-table-container {
         padding: 15px;
     }
@@ -888,8 +889,8 @@ body {
     }
 
     .coins-table-container *:focus {
-    outline: none;
-    box-shadow: none;
+        outline: none;
+        box-shadow: none;
     }
 
     .table-controls {
@@ -925,10 +926,12 @@ body {
     .coins-table td:last-child {
         display: none;
     }
+
     .sort-select {
         width: 100%;
         margin-top: 10px;
     }
+
     :root[data-theme="dark"] .sort-select {
         background: #1a1a2e !important;
         color: #ffffff !important;
@@ -950,8 +953,7 @@ body {
     --bg-tertiary: rgba(255, 255, 255, 0.03);
 
     /* Text Colors */
-    --text-primary: #a0a0a0;
-    --text-principal: #ffffff;
+    --text-primary: #ffffff;
     --text-secondary: #a0a0a0;
     --text-accent: #00d4ff;
 
@@ -995,11 +997,13 @@ body {
     background: #1a1a2e;
     color: #ffffff;
 }
+
 :root[data-theme="dark"] .search-input {
     background: #1a1a2e;
-    color: var(--text-principal);
+    color: var(--text-primary);
     border-color: rgba(255, 255, 255, 0.1);
 }
+
 :root[data-theme="dark"] .search-input::placeholder {
     color: #a0a0a0;
 }
@@ -1013,7 +1017,6 @@ body {
 
     /* Text Colors */
     --text-primary: #1a1a1a;
-    --text-principal: #000000;
     --text-secondary: #6b7280;
     --text-accent: #0066cc;
 
@@ -1046,7 +1049,6 @@ body {
     /* Button */
     --btn-color: #ffffff;
 }
-
 
 .theme-toggle-container {
     position: fixed;
@@ -1119,7 +1121,7 @@ body {
     width: 100%;
     height: 100%;
     transition: all 0.3s ease;
-    color: var(--text-principal);
+    color: var(--text-primary);
 }
 
 
@@ -1199,7 +1201,7 @@ body {
     border: 1px solid var(--border-primary);
     border-radius: 8px;
     padding: 10px 15px;
-    color: #ffffff;
+    color: var(--text-primary);
     font-size: 0.9rem;
     transition: all 0.3s ease;
     cursor: none;
@@ -1250,7 +1252,7 @@ body {
 }
 
 .coins-table th {
-    background: #000000 !important; 
+    background: #000000 !important;
     color: #ffffff;
     font-weight: 600;
     padding: 15px 12px;
@@ -1268,7 +1270,7 @@ body {
 .coins-table td {
     padding: 15px 12px;
     border-bottom: 1px solid var(--border-primary);
-    color: var(--text-principal);
+    color: var(--text-primary);
     transition: all 0.3s ease;
     cursor: none;
     background: transparent;
@@ -1303,7 +1305,7 @@ body {
 
 .coin-name {
     font-weight: 500;
-    color: var(--text-principal); 
+    color: var(--text-primary);
 }
 
 .coin-rank {
@@ -1337,7 +1339,6 @@ body {
     font-size: 0.85rem;
 }
 
-/* Scrollbar personalizada para a tabela */
 .table-wrapper::-webkit-scrollbar {
     width: 8px;
 }
@@ -1356,6 +1357,7 @@ body {
 .table-wrapper::-webkit-scrollbar-thumb:hover {
     opacity: 1;
 }
+
 .table-wrapper:focus {
     opacity: 0.8;
     background: var(--accent-primary);
