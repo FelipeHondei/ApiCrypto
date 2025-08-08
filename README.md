@@ -66,8 +66,9 @@ Um dashboard web moderno e interativo para análise de criptomoedas em tempo rea
    ```
 
 3. **Interaja com o dashboard**
-   - Aguarde o loading screen cinematográfico
-   - Clique em "Analisar Mercado" para carregar dados
+   - Aguarde o loading screen
+   - Espere os dados serem atualizados
+   - Clique em "Analisar" para atualizar os dados
    - Explore os cards interativos
    - Use Ctrl+R para atualizar rapidamente
 
