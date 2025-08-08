@@ -125,53 +125,6 @@
         </div>
         <!-- Cards Stats End -->
 
-        <div id="chartSection" class="section" style="display: none;">
-            <h2 class="section-title">📈 Gráfico da Moeda Selecionada</h2>
-            <div class="chart-container">
-                <div class="chart-header">
-                    <div class="selected-coin-info">
-                        <span class="selected-coin-symbol" id="selectedCoinSymbol">BTC</span>
-                        <span class="selected-coin-name" id="selectedCoinName">Bitcoin</span>
-                        <span class="selected-coin-price" id="selectedCoinPrice">$45,320.50</span>
-                    </div>
-                    <div class="chart-controls">
-                        <select id="chartTimeframe" class="chart-timeframe-select">
-                            <option value="1">1 Dia</option>
-                            <option value="7" selected>7 Dias</option>
-                            <option value="30">30 Dias</option>
-                            <option value="90">90 Dias</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="chart-loading" id="chartLoading" style="display: none;">
-                    <div class="chart-spinner"></div>
-                    <span>Carregando dados históricos...</span>
-                </div>
-                <div class="chart-wrapper">
-                    <canvas id="priceChart" width="800" height="300"></canvas>
-                </div>
-                <div class="chart-stats">
-                    <div class="stat-item">
-                        <span class="stat-label">Variação 24h</span>
-                        <span class="stat-value" id="chart24hChange">+2.45%</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Variação 7d</span>
-                        <span class="stat-value" id="chart7dChange">+5.20%</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Máxima</span>
-                        <span class="stat-value" id="chartMaxPrice">$46,850.00</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Mínima</span>
-                        <span class="stat-value" id="chartMinPrice">$43,120.00</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
         <!-- Table -->
         <div id="allCoinsSection" class="section" style="display: none;">
             <h2 class="section-title">📊 Todas as Moedas (Top 100)</h2>
@@ -208,7 +161,7 @@
         </div>
         <!-- Table End -->
         <script src="script.js"></script>
-        <!-- Container End -->
+    <!-- Container End -->
 </body>
 
 </html>

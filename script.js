@@ -10,8 +10,6 @@ let currentSortBy = 'rank';
 let currentSortOrder = 'asc';
 let autoRefreshInterval = null;
 let isAutoRefreshing = false;
-let priceChart = null;
-let selectedCoinData = null;
 
 // API Configuration
 const API_CONFIG = {
@@ -20,37 +18,6 @@ const API_CONFIG = {
         tickers: '/tickers/',
         global: '/global/'
     }
-};
-const COINGECKO_API = {
-    baseUrl: 'https://api.coingecko.com/api/v3',
-    endpoints: {
-        coinsList: '/coins/list',
-        marketChart: '/coins/{id}/market_chart',
-        simplePrice: '/simple/price'
-    }
-};
-
-const COIN_ID_MAP = {
-    'BTC': 'bitcoin',
-    'ETH': 'ethereum',
-    'ADA': 'cardano',
-    'SOL': 'solana',
-    'DOT': 'polkadot',
-    'LINK': 'chainlink',
-    'LTC': 'litecoin',
-    'AVAX': 'avalanche-2',
-    'MATIC': 'matic-network',
-    'ATOM': 'cosmos',
-    'BNB': 'binancecoin',
-    'XRP': 'ripple',
-    'DOGE': 'dogecoin',
-    'SHIB': 'shiba-inu',
-    'TRX': 'tron',
-    'USDT': 'tether',
-    'USDC': 'usd-coin',
-    'UNI': 'uniswap',
-    'AAVE': 'aave',
-    'SUSHI': 'sushi'
 };
 
 class LoadingManager {
@@ -613,9 +580,6 @@ function setupTableEventListeners() {
             }
         });
     }
-
-    // Configurar event listeners do gráfico
-    setupChartEventListeners();
 }
 
 function sortCoinsData() {
@@ -643,319 +607,6 @@ function sortCoinsData() {
         }
     });
 }
-function getCoinGeckoId(symbol) {
-    return COIN_ID_MAP[symbol.toUpperCase()] || symbol.toLowerCase();
-}
-
-async function fetchHistoricalData(coinSymbol, days = 7) {
-    const coinId = getCoinGeckoId(coinSymbol);
-
-    try {
-        const response = await fetch(
-            `${COINGECKO_API.baseUrl}/coins/${coinId}/market_chart?vs_currency=usd&days=${days}&interval=hourly`,
-            {
-                headers: {
-                    'Accept': 'application/json',
-                }
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (!data.prices || data.prices.length === 0) {
-            throw new Error('Dados de preço não encontrados');
-        }
-
-        return {
-            prices: data.prices, // Array de [timestamp, price]
-            volumes: data.total_volumes || [],
-            marketCaps: data.market_caps || []
-        };
-    } catch (error) {
-        console.error(`Erro ao buscar dados históricos para ${coinSymbol}:`, error);
-        throw error;
-    }
-}
-function processHistoricalData(historicalData, days) {
-    const { prices } = historicalData;
-
-    if (!prices || prices.length === 0) {
-        throw new Error('Dados de preço vazios');
-    }
-
-    const labels = [];
-    const priceData = [];
-
-    // Determinar intervalo baseado no período
-    let interval;
-    if (days <= 1) {
-        interval = 1; // Cada hora para 1 dia
-    } else if (days <= 7) {
-        interval = 4; // A cada 4 horas para 7 dias
-    } else if (days <= 30) {
-        interval = 12; // A cada 12 horas para 30 dias
-    } else {
-        interval = 24; // Uma vez por dia para 90 dias
-    }
-
-    for (let i = 0; i < prices.length; i += interval) {
-        const [timestamp, price] = prices[i];
-        const date = new Date(timestamp);
-
-        priceData.push(parseFloat(price.toFixed(2)));
-
-        if (days <= 1) {
-            labels.push(date.toLocaleTimeString('pt-BR', {
-                hour: '2-digit',
-                minute: '2-digit'
-            }));
-        } else if (days <= 7) {
-            labels.push(date.toLocaleDateString('pt-BR', {
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit'
-            }));
-        } else {
-            labels.push(date.toLocaleDateString('pt-BR', {
-                month: 'short',
-                day: 'numeric'
-            }));
-        }
-    }
-
-    return { priceData, labels };
-}
-
-function showChartLoading() {
-    const loading = document.getElementById('chartLoading');
-    const wrapper = document.querySelector('.chart-wrapper');
-
-    if (loading && wrapper) {
-        loading.style.display = 'flex';
-        wrapper.style.display = 'none';
-    }
-}
-
-function hideChartLoading() {
-    const loading = document.getElementById('chartLoading');
-    const wrapper = document.querySelector('.chart-wrapper');
-
-    if (loading && wrapper) {
-        loading.style.display = 'none';
-        wrapper.style.display = 'block';
-    }
-}
-
-function showChartError(message) {
-    const wrapper = document.querySelector('.chart-wrapper');
-    if (wrapper) {
-        wrapper.innerHTML = `
-            <div class="chart-error">
-                <h3>❌ Erro ao carregar dados</h3>
-                <p>${message}</p>
-                <p><small>Verifique sua conexão ou tente novamente.</small></p>
-            </div>
-        `;
-    }
-    hideChartLoading();
-}
-
-async function createPriceChart(coinData, timeframe = 7) {
-    const ctx = document.getElementById('priceChart');
-    if (!ctx) return;
-
-    showChartLoading();
-
-    try {
-        // Destruir gráfico anterior se existir
-        if (priceChart) {
-            priceChart.destroy();
-        }
-
-        // Buscar dados históricos reais
-        const historicalData = await fetchHistoricalData(coinData.symbol, parseInt(timeframe));
-        const { priceData, labels } = processHistoricalData(historicalData, parseInt(timeframe));
-
-        hideChartLoading();
-
-        // Determinar cor do gráfico baseado na tendência
-        const isPositiveTrend = priceData[priceData.length - 1] > priceData[0];
-        const lineColor = isPositiveTrend ? '#00ff88' : '#ff4757';
-        const gradientColor = isPositiveTrend
-            ? 'rgba(0, 255, 136, 0.1)'
-            : 'rgba(255, 71, 87, 0.1)';
-
-        // Criar gradiente
-        const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, gradientColor);
-        gradient.addColorStop(1, 'transparent');
-
-        priceChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: `${coinData.symbol} Price`,
-                    data: priceData,
-                    borderColor: lineColor,
-                    backgroundColor: gradient,
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: lineColor,
-                    pointBorderColor: '#ffffff',
-                    pointBorderWidth: 2,
-                    pointRadius: labels.length > 50 ? 0 : 4,
-                    pointHoverRadius: 6,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
-                        borderColor: lineColor,
-                        borderWidth: 1,
-                        cornerRadius: 8,
-                        displayColors: false,
-                        callbacks: {
-                            label: function (context) {
-                                return `$${context.parsed.y.toLocaleString('en-US', {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 6
-                                })}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)',
-                            drawBorder: false,
-                        },
-                        ticks: {
-                            color: '#a0a0a0',
-                            font: {
-                                size: 11
-                            },
-                            maxTicksLimit: 8
-                        }
-                    },
-                    y: {
-                        grid: {
-                            color: 'rgba(255, 255, 255, 0.1)',
-                            drawBorder: false,
-                        },
-                        ticks: {
-                            color: '#a0a0a0',
-                            font: {
-                                size: 11
-                            },
-                            callback: function (value) {
-                                if (value >= 1) {
-                                    return '$' + value.toLocaleString('en-US', {
-                                        minimumFractionDigits: 0,
-                                        maximumFractionDigits: 2
-                                    });
-                                } else {
-                                    return '$' + value.toFixed(6);
-                                }
-                            }
-                        }
-                    }
-                },
-                interaction: {
-                    intersect: false,
-                    mode: 'index',
-                },
-                elements: {
-                    point: {
-                        hoverBackgroundColor: lineColor,
-                    }
-                }
-            }
-        });
-
-        // Atualizar estatísticas do gráfico
-        updateChartStats(priceData, coinData);
-
-    } catch (error) {
-        console.error('Erro ao criar gráfico:', error);
-        showChartError(error.message);
-    }
-}
-function updateChartStats(priceData, coinData) {
-    const minPrice = Math.min(...priceData);
-    const maxPrice = Math.max(...priceData);
-
-    document.getElementById('chartMaxPrice').textContent = `$${formatPrice(maxPrice)}`;
-    document.getElementById('chartMinPrice').textContent = `$${formatPrice(minPrice)}`;
-
-    // Atualizar variações com cores
-    const change24h = document.getElementById('chart24hChange');
-    const change7d = document.getElementById('chart7dChange');
-
-    if (change24h) {
-        change24h.textContent = formatPercentage(coinData.change24h);
-        change24h.className = 'stat-value ' + (coinData.change24h > 0 ? 'positive' : coinData.change24h < 0 ? 'negative' : '');
-    }
-
-    if (change7d) {
-        change7d.textContent = formatPercentage(coinData.change7d);
-        change7d.className = 'stat-value ' + (coinData.change7d > 0 ? 'positive' : coinData.change7d < 0 ? 'negative' : '');
-    }
-}
-
-async function showCoinChart(coinData) {
-    selectedCoinData = coinData;
-
-    // Atualizar informações da moeda selecionada
-    document.getElementById('selectedCoinSymbol').textContent = coinData.symbol;
-    document.getElementById('selectedCoinName').textContent = coinData.name;
-    document.getElementById('selectedCoinPrice').textContent = `$${formatPrice(coinData.price)}`;
-
-    // Mostrar a seção do gráfico
-    const chartSection = document.getElementById('chartSection');
-    chartSection.style.display = 'block';
-
-    setTimeout(() => {
-        chartSection.classList.add('loaded');
-    }, 100);
-
-    // Criar o gráfico
-    const timeframe = document.getElementById('chartTimeframe').value;
-    await createPriceChart(coinData, timeframe);
-
-    // Scroll suave até o gráfico
-    setTimeout(() => {
-        chartSection.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-        });
-    }, 500);
-}
-
-function setupChartEventListeners() {
-    const timeframeSelect = document.getElementById('chartTimeframe');
-    if (timeframeSelect) {
-        timeframeSelect.addEventListener('change', async (e) => {
-            if (selectedCoinData) {
-                await createPriceChart(selectedCoinData, e.target.value);
-            }
-        });
-    }
-}
 
 function highlightCoin(symbol) {
     document.querySelectorAll('.coin-highlighted').forEach(el => {
@@ -972,12 +623,6 @@ function highlightCoin(symbol) {
     }
 
     scrollToOtherCoinSections(symbol);
-
-    // Mostrar gráfico da moeda selecionada
-    const coinData = allCoinsData.find(coin => coin.symbol === symbol);
-    if (coinData) {
-        showCoinChart(coinData);
-    }
 }
 
 function scrollToOtherCoinSections(symbol) {
@@ -1339,22 +984,6 @@ function updateVisualEffectsTheme(theme) {
         root.style.setProperty('--particle-color', '#ffffff');
         root.style.setProperty('--glow-color', 'rgba(0, 212, 255, 0.2)');
     }
-    function updateChartTheme(theme) {
-        if (priceChart && priceChart.options) {
-            const gridColor = theme === 'light'
-                ? 'rgba(0, 0, 0, 0.1)'
-                : 'rgba(255, 255, 255, 0.1)';
-            const textColor = theme === 'light' ? '#6b7280' : '#a0a0a0';
-
-            priceChart.options.scales.x.grid.color = gridColor;
-            priceChart.options.scales.y.grid.color = gridColor;
-            priceChart.options.scales.x.ticks.color = textColor;
-            priceChart.options.scales.y.ticks.color = textColor;
-
-            priceChart.update('none');
-        }
-    }
-    updateChartTheme(theme);
 }
 
 function getCurrentTheme() {
