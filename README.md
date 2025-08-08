@@ -49,7 +49,7 @@ Um dashboard web moderno e interativo para análise de criptomoedas em tempo rea
 1. **Clone o repositório**
    ```bash
    git clone https://github.com/FelipeHondei/ApiCrypto.git
-   cd crypto-analyzer
+   cd ApiCrypto
    ```
 
 2. **Abra o dashboard**
