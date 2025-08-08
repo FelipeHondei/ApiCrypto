@@ -1,4 +1,4 @@
-# 🚀 CryptoAnalyzer Dashboard
+# 🚀 Coinly Dashboard
 
 Um dashboard web moderno e interativo para análise de criptomoedas em tempo real com interface futurística e efeitos visuais avançados.
 
@@ -74,7 +74,7 @@ Um dashboard web moderno e interativo para análise de criptomoedas em tempo rea
 ## 📁 Estrutura do Projeto
 
 ```
-crypto-analyzer-dashboard/
+ApiCrypto/
 ├── index.html             # Página principal
 ├── script.js              # Lógica e interatividade
 ├── styles.css             # Estilização avançada
